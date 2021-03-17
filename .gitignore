@@ -3,8 +3,6 @@ test
 *.zip
 cmake-build-debug
 CMakeLists.txt
-.makefile
-
 proc
 main
 
