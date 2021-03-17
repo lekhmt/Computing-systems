@@ -1,3 +1,5 @@
 .idea
 test
 *.zip
+cmake-build-debug
+CMakeLists.txt
