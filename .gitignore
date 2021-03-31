@@ -3,7 +3,7 @@ test
 *.zip
 cmake-build-debug
 CMakeLists.txt
-proc
+encode
 main
 
 # Prerequisites
