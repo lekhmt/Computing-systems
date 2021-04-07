@@ -5,6 +5,7 @@ cmake-build-debug
 CMakeLists.txt
 encode
 main
+Семинары/
 
 # Prerequisites
 *.d
