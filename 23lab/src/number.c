@@ -4,27 +4,27 @@
 
 char* get_enum_name(Number n){
     switch (n) {
-        case 0:
+        case ZERO:
             return "ZERO";
-        case 1:
+        case ONE:
             return "ONE";
-        case 2:
+        case TWO:
             return "TWO";
-        case 3:
+        case THREE:
             return "THREE";
-        case 4:
+        case FOUR:
             return "FOUR";
-        case 5:
+        case FIVE:
             return "FIVE";
-        case 6:
+        case SIX:
             return "SIX";
-        case 7:
+        case SEVEN:
             return "SEVEN";
-        case 8:
+        case EIGHT:
             return "EIGHT";
-        case 9:
+        case NINE:
             return "NINE";
-        case 10:
+        case TEN:
             return "TEN";
         default:
             return "ERROR";

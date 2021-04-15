@@ -8,19 +8,27 @@
 #include "headers/tree.h"
 #include "headers/queue.h"
 
-#define CONTINUE {                          \
-    printf("\033[32;1mcmd\033[0m: ");       \
-    scanf("%s", word);                      \
-    clear_from_tabs(word);                  \
-    continue;                               \
-}
-
-#define GET_WORD {                          \
-    fgets(word, STRING_CAPACITY, stdin);    \
-    clear_from_tabs(word);                  \
-}
-
 const int STRING_CAPACITY  = 512;
+
+void clear_from_tabs(char* word);
+
+int get_word(char* word){
+    char* res = fgets(word, STRING_CAPACITY, stdin);
+    if (res == NULL){
+        return -1;
+    }
+    clear_from_tabs(word);
+    return 0;
+}
+
+int cnt(char* word){
+    printf("\033[32;1mcmd\033[0m: ");
+    if (scanf("%s", word) == EOF){
+        return -1;
+    }
+    clear_from_tabs(word);
+    return 0;
+}
 
 void check_next_vertex(tree t, queue* r, bool* previous){
     tree left = get_left(t);
@@ -111,6 +119,20 @@ void help(){
 
 int main(int argc, char* argv[]){
 
+    #define CONTINUE                            \
+        response = cnt(word);                   \
+        if (response == -1){                    \
+            printf("exit\n");                   \
+            break;                              \
+        }                                       \
+
+    #define GET_WORD                            \
+        response = get_word(word);              \
+        if (response == -1){                    \
+            printf("exit\n");                   \
+            break;                              \
+        }                                       \
+
     tree t = create();
 
     if (argc != 1){
@@ -136,8 +158,13 @@ int main(int argc, char* argv[]){
     printf("\033[3mType \"help\" to see manual\n");
 
     printf("\033[32;1mcmd\033[0m: ");
-    scanf("%s", word);
+    if (scanf("%s", word) == EOF){
+        printf("exit\n");
+        return 0;
+    }
     clear_from_tabs(word);
+
+    int response;
 
     while (strcmp(word, "exit") != 0){
 
