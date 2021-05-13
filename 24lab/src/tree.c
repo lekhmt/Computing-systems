@@ -1,13 +1,13 @@
 #include "../headers/header.h"
 
-tree    create()            { return NULL; }
-void    destroy(tree t)     { free(t); }
-bool    is_empty(tree t)    { return t == NULL; }
-int     get_value(tree t)   { return t->value; }
-tree    get_left(tree t)    { return t->left; }
-tree    get_right(tree t)   { return t->right; }
+tree    tree_create()            { return NULL; }
+void    tree_destroy(tree t)     { free(t); }
+bool    tree_is_empty(tree t)    { return t == NULL; }
+token   tree_get_value(tree t)   { return t->value; }
+tree    tree_get_left(tree t)    { return t->left; }
+tree    tree_get_right(tree t)   { return t->right; }
 
-tree build(tree left, int value, tree right){
+tree tree_build(tree left, token value, tree right){
     tree tmp    = malloc(sizeof(node));
     tmp->left   = left;
     tmp->value  = value;
@@ -15,84 +15,35 @@ tree build(tree left, int value, tree right){
     return tmp;
 }
 
-tree insert(tree t, int value){
-    if (is_empty(t)){
-        return build(create(), value, create());
-    } else if ( value < get_value(t) ){
-        tree tmp = build(insert(get_left(t), value), get_value(t), get_right(t));
-        destroy(t);
-        return tmp;
-    } else if ( value > get_value(t) ){
-        tree tmp = build(get_left(t), get_value(t), insert(get_right(t), value));
-        destroy(t);
-        return tmp;
-    } else {
-        return t;
-    }
-}
-
-void print(tree t, int h){
-    if ( t != NULL ){
-        print(t->right, h + 2);
-        printf("|");
-        for (int i = 0; i < h; ++i) { printf("-"); }
-        printf("%d\n", t->value);
-        print(t->left, h + 2);
-    }
-}
-
-tree remove_root(tree t, int* new_value){
-    if (!is_empty(get_left(t))){
-        tree tmp = build(remove_root(get_left(t), new_value), get_value(t), get_right(t));
-        destroy(t);
-        return tmp;
-    } else {
-        *new_value = get_value(t);
-        tree tmp = get_right(t);
-        destroy(t);
-        return tmp;
-    }
-}
-
-tree delete(tree t, int value){
-    if (is_empty(t)){
-        return t;
-    } else if ( value < get_value(t) ){
-        tree tmp = build(delete(get_left(t), value), get_value(t), get_right(t));
-        destroy(t);
-        return tmp;
-    } else if ( value > get_value(t) ){
-        tree tmp = build(get_left(t), get_value(t), delete(get_right(t), value));
-        destroy(t);
-        return tmp;
-    } else {
-        if (is_empty(get_right(t))){
-            tree tmp = get_left(t);
-            destroy(t);
-            return tmp;
-        } else if (is_empty(get_left(t))){
-            tree tmp = get_right(t);
-            destroy(t);
-            return tmp;
-        } else {
-            int new_value;
-            tree new_right = remove_root(get_right(t), &new_value);
-            tree tmp = build(get_left(t), new_value, new_right);
-            destroy(t);
-            return tmp;
-        }
-    }
-}
-
-void clear(tree t){
-    if (is_empty(t)){
+void tree_clear(tree t){
+    if (tree_is_empty(t)){
         return;
     }
-    if (!is_empty(get_left(t))){
-        clear(get_left(t));
+    if (!tree_is_empty(tree_get_left(t))){
+        tree_clear(tree_get_left(t));
     }
+    if (!tree_is_empty(tree_get_right(t))){
+        tree_clear(tree_get_right(t));
+    }
+    tree_destroy(t);
+}
+
+void tree_print(tree t, int h){
     if (!is_empty(get_right(t))){
-        clear(get_right(t));
+        tree_print(get_right(t), h + 2);
     }
-    destroy(t);
+    for (int i = 0; i < h; ++i){
+        printf(".");
+    }
+    token tmp = get_value(t);
+    if (tmp.type == CONST){
+        printf("%lf\n", tmp.data.value);
+    } else if (tmp.type == VARIABLE){
+        printf("%s\n", tmp.data.name);
+    } else {
+        printf("%c\n", tmp.data.operator);
+    }
+    if (!is_empty(get_left(t))){
+        tree_print(get_left(t), h + 2);
+    }
 }

@@ -1,8 +1,10 @@
 #ifndef _QUEUE_H
 #define _QUEUE_H
 
+#include "token.h"
+
 struct q_item {
-    char data;
+    token data;
     struct q_item* next;
 };
 
@@ -12,12 +14,12 @@ typedef struct {
     int size;
 } queue;
 
-bool    q_create(queue* q);
-bool    q_is_empty(queue *q);
-int     q_size(queue* q);
-bool    q_push(queue* q, char c);
-char    q_pop(queue* q);
-void    q_destroy(queue* q);
-void    q_clear(queue* q);
+bool    queue_create(queue* q);
+bool    queue_is_empty(queue *q);
+int     queue_size(queue* q);
+bool    queue_push(queue* q, token t);
+token   queue_pop(queue* q);
+void    queue_destroy(queue* q);
+void    queue_clear(queue* q);
 
 #endif
