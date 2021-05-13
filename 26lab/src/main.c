@@ -1,4 +1,4 @@
-#include "headers/header.h"
+#include "../headers/header.h"
 
 void print_result(queue* q){
     double elem = pop(q);

@@ -1,19 +1,19 @@
 CC=gcc
 CFLAGS=-g -c -Wall -pedantic --std=c99
 
-all: main
+NAME=main
+OBJECTS=$(patsubst src/%.c,build/%.o,$(wildcard src/*.c))
+HEADERS=$(wildcard headers/*.h)
 
-main: build/queue.o build/sort.o build/main.o
-	$(CC) build/*.o -o main
+.PHONY: all clean
 
-build/queue.o: src/queue.c headers/header.h
-	$(CC) $(CFLAGS) src/queue.c -o build/queue.o
+all: $(NAME)
 
-build/sort.o: src/sort.c headers/header.h
-	$(CC) $(CFLAGS) src/sort.c -o build/sort.o
+$(NAME): $(OBJECTS)
+	$(CC) build/*.o -o $(NAME)
 
-build/main.o: main.c headers/header.h
-	$(CC) $(CFLAGS) main.c -o build/main.o
+build/%.o: src/%.c $(HEADERS)
+	$(CC) $(CFLAGS) $< -o $@ 
 
 clean:
-	rm -rf build/*.o main
+	rm -rf build/*.o $(NAME)
