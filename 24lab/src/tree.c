@@ -16,16 +16,16 @@ tree tree_build(tree left, token value, tree right){
 }
 
 void tree_clear(tree t){
-    if (tree_is_empty(t)){
+    if (is_empty(t)){
         return;
     }
-    if (!tree_is_empty(tree_get_left(t))){
-        tree_clear(tree_get_left(t));
+    if (!is_empty(get_left(t))){
+        clear(get_left(t));
     }
     if (!tree_is_empty(tree_get_right(t))){
-        tree_clear(tree_get_right(t));
+        clear(get_right(t));
     }
-    tree_destroy(t);
+    destroy(t);
 }
 
 void tree_print(tree t, int h){

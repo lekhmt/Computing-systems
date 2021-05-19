@@ -15,7 +15,13 @@ RT_SIGNAL read_token(token *out, token_type previous){
 
     // RT_EOE
     if (c == '\n'){
-        return RT_EOE;
+        c = getchar();
+        if (c == EOF) {
+            return RT_EOF;
+        } else {
+            ungetc(c, stdin);
+            return RT_EOE;
+        }
     }
 
     // RT_EOF
@@ -111,12 +117,19 @@ READ_SIGNAL read_expression(queue* result){
 
     token tk;
     RT_SIGNAL response = read_token(&tk, NONE);
+    bool success = true;
+    if (response == RT_UNEXPECTED_TOKEN || response == RT_INVALID_CHAR){
+        success = false;
+    }
 
-    if (response == RT_EOE){
+    if (response == RT_EOE && success){
         return READ_EOE;
     }
-    if (response == RT_EOF){
+    if (response == RT_EOF && success){
         return READ_EOF;
+    }
+    if (!success){
+        return READ_ERROR;
     }
 
     do {
@@ -124,13 +137,11 @@ READ_SIGNAL read_expression(queue* result){
     } while ((response = read_token(&tk, tk.type)) == RT_SUCCESS);
 
     if (response == RT_UNEXPECTED_TOKEN){
-        print_error("unexpected token");
-        return READ_UNEXPECTED_TOKEN;
+        return READ_ERROR;
     }
 
     if (response == RT_INVALID_CHAR){
-        print_error("invalid char");
-        return READ_INVALID_CHAR;
+        return READ_ERROR;
     }
 
     if (response == RT_EOE){
@@ -147,18 +158,18 @@ READ_SIGNAL read_expression(queue* result){
 
 void print_token(token tk){
     if (tk.type == LEFT_BRACKET){
-        printf("tk: (\n");
+        printf("(");
     } else if (tk.type == RIGHT_BRACKET){
-        printf("tk: )\n");
+        printf(")");
     }
     if (tk.type == VARIABLE){
-        printf("tk: %s\n", tk.data.name);
+        printf("%s", tk.data.name);
     }
     if (tk.type == CONST){
-        printf("tk: %lf\n", tk.data.value);
+        printf("%.0lf", tk.data.value);
     }
     if (tk.type == OPERATOR){
-        printf("tk: %c\n", tk.data.operator);
+        printf("%c", tk.data.operator);
     }
 }
 

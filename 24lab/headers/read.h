@@ -13,8 +13,7 @@ typedef enum {                  // return signals for read_token
 } RT_SIGNAL;
 
 typedef enum {                  // return signals for read_expression (same as RT_SIGNAL)
-    READ_UNEXPECTED_TOKEN = -4,
-    READ_INVALID_CHAR,
+    READ_ERROR = -3,
     READ_EOE,
     READ_EOF,
     READ_SUCCESS,
