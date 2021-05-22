@@ -70,5 +70,6 @@
 #define get_right(X) tree_get_right(X)
 #define build(X, Y, Z) tree_build(X, Y, Z)
 #define print(X, Y) tree_print(X, Y)
+#define copy(X) tree_copy(X)
 
 #endif

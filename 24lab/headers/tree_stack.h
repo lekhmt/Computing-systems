@@ -20,5 +20,6 @@ bool    tree_stack_push(tree_stack* s, tree t);
 tree    tree_stack_pop(tree_stack* s);
 void    tree_stack_destroy(tree_stack* s);
 void    tree_stack_clear(tree_stack* s);
+tree    tree_copy(tree t);
 
 #endif

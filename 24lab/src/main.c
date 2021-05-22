@@ -88,7 +88,7 @@ tree get_power(tree t, double power){
         token tk;
         tk.type = OPERATOR;
         tk.data.operator = '*';
-        tmp = build(tmp, tk, get_left(t));
+        tmp = build(tmp, tk, copy(get_left(t)));
     }
     if (power > 0){
         return tmp;

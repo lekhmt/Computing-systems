@@ -47,3 +47,14 @@ void tree_print(tree t, int h){
         tree_print(get_left(t), h + 2);
     }
 }
+
+tree tree_copy(tree t){
+    tree left = NULL; tree right = NULL; token tk = get_value(t);
+    if (!is_empty(get_left(t))){
+        left = copy(get_left(t));
+    }
+    if (!is_empty(get_right(t))){
+        right = copy(get_right(t));
+    }
+    return build(left, tk, right);
+}
