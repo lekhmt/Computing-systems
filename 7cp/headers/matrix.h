@@ -9,6 +9,6 @@ typedef struct {
 void    read_matrix(matrix* mtx);
 void    print_vector(matrix* mtx);
 void    print_matrix(matrix* mtz);
-void    solve(double search, matrix* mtx);
+bool    solve(double search, matrix* mtx);
 
 #endif

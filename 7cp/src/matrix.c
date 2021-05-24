@@ -150,7 +150,7 @@ void refactor_matrix(double elem, matrix* mtx, vector* iid, vector* jid){
 
 }
 
-void solve(double search, matrix* mtx){
+bool solve(double search, matrix* mtx){
 
     int m = mtx->m;
     int n = mtx->n;
@@ -189,7 +189,6 @@ void solve(double search, matrix* mtx){
                 if (size(r) != 0){
                     double cmp = get(r, 0);
                         if (fabs(cmp - search) == fabs(num - search)){
-                            //append(r, num);
                             if (cmp != num){
                                 if (size(r) == 1){
                                     append(r, num);
@@ -220,9 +219,7 @@ void solve(double search, matrix* mtx){
     }
 
     if (!found){
-        printf("\033[31;3mError:\033[0m: element not found. Try again.\n");
-        scanf("%lf", &search);
-        solve(search, mtx);
+        return false;
     } else {
         refactor_matrix(get(r, 0), mtx, iidf, jidf);
         if (size(r) == 2){
@@ -230,7 +227,7 @@ void solve(double search, matrix* mtx){
         }
     }
 
-    print_matrix(mtx);
+    return true;
 
 }
 

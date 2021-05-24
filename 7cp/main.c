@@ -17,6 +17,17 @@ int main(){
     double elem;
     scanf("%lf", &elem);
 
-    solve(elem, &mtx);
+    bool response;
+
+    do {
+        response = solve(elem, &mtx);
+        if (!response){
+            printf("\033[31;3mError:\033[0m: element not found. Try again.\n");
+            scanf("%lf", &elem);
+            solve(elem, &mtx);
+        }
+    } while (!response);
+
+    print_matrix(&mtx);
 
 }
