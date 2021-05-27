@@ -1,6 +1,6 @@
 // тип элементов - вещественный
-// линейный двунаправленный
-// переставить элементы списка в обратном порядке
+// линейный двунаправленный с барьерным элементом
+// проверить упорядоченность элементов списка
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,6 +23,23 @@ int main(int argc, char* argv[]){
 
     list l;
     list_create(&l);
+
+    list_push_back(&l, 1);
+    list_push_back(&l, 2);
+    list_push_back(&l, 3);
+    list_push_back(&l, 3);
+    list_push_back(&l, 3);
+    list_push_back(&l, 3);
+    list_push_back(&l, 3);
+    list_push_back(&l, 3);
+    list_push_back(&l, 3);
+    list_push_back(&l, 3);
+    list_push_back(&l, 3);
+    list_push_back(&l, 3);
+    list_push_back(&l, 3);
+    list_push_back(&l, 3);
+
+
 
     char word[STRING_CAPACITY];
     bool response;
@@ -48,7 +65,11 @@ int main(int argc, char* argv[]){
         if (strcmp(word, "insert") == 0){
             T value; int index;
             scanf("%d %d", &value, &index);
-            list_insert(&l, index, value);
+            if (index < 0 || index >= list_size(&l)){
+                print_error("invalid index.");
+            } else {
+                list_insert(&l, index, value);
+            }
             continue;
         }
 
@@ -71,7 +92,11 @@ int main(int argc, char* argv[]){
         if (strcmp(word, "remove") == 0){
             int index;
             scanf("%d", &index);
-            list_delete(&l, index);
+            if (index < 0 || index >= list_size(&l)){
+                print_error("invalid index.");
+            } else {
+                list_delete(&l, index);
+            }
             continue;
         }
 
@@ -107,22 +132,16 @@ int main(int argc, char* argv[]){
             continue;
         }
 
-        if (strcmp(word, "reverse") == 0){
+        if (strcmp(word, "sorted") == 0){
             read_arguments(word);
             if (strcmp(word, "") != 0){
-                print_note("function \"reverse\" does not require arguments.");
+                print_note("function \"sorted\" does not require arguments.");
             }
-            list_reverse(&l);
-            continue;
-        }
-
-        if (strcmp(word, "clear") == 0){
-            read_arguments(word);
-            if (strcmp(word, "") != 0){
-                print_note("function \"clear\" does not require arguments.");
+            if (list_sorted(&l)){
+                printf("list is sorted.\n");
+            } else {
+                printf("list is not sorted.\n");
             }
-            // do clear
-            printf("function clear\n");
             continue;
         }
 
@@ -132,5 +151,7 @@ int main(int argc, char* argv[]){
         }
 
     } while ((strcmp(word, "exit") != 0));
+
+    list_destroy(&l);
 
 }

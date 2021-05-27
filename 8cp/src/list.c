@@ -4,8 +4,6 @@
 
 #include "../headers/list.h"
 
-int barrier_element = 0;
-
 // iterator
 T iter_get_value(iterator it){
     return it.list->buffer[it.previous].value;
@@ -28,19 +26,15 @@ bool iter_is_equal(iterator it1, iterator it2){
 }
 
 iterator iter_begin(list *l){
-    return (iterator){l, l->buffer[barrier_element].next_index};
+    return (iterator){l, l->buffer[l->barrier_element].next_index};
 }
 
 iterator iter_end(list *l){
-    return (iterator){l, barrier_element};
+    return (iterator){l, l->barrier_element};
 }
 
 iterator iter_last_element(list *l){
     return iter_previous(iter_end(l));
-}
-
-list_element *link_end(list *l){
-    return &l->buffer[barrier_element];
 }
 
 void iter_insert_before(iterator *it, T val){
@@ -49,10 +43,10 @@ void iter_insert_before(iterator *it, T val){
     it->list->first_empty_index = it->list->buffer[insert_to].next_index;
     it->list->buffer[insert_to].value = val;
     if(iter_is_equal(*it, iter_end(it->list))){
-        it->list->buffer[insert_to].previous_index = barrier_element;
-        it->list->buffer[insert_to].next_index = it->list->buffer[barrier_element].next_index;
-        it->list->buffer[it->list->buffer[barrier_element].next_index].previous_index = insert_to;
-        it->list->buffer[barrier_element].next_index = insert_to;
+        it->list->buffer[insert_to].previous_index = it->list->barrier_element;
+        it->list->buffer[insert_to].next_index = it->list->buffer[it->list->barrier_element].next_index;
+        it->list->buffer[it->list->buffer[it->list->barrier_element].next_index].previous_index = insert_to;
+        it->list->buffer[it->list->barrier_element].next_index = insert_to;
     } else{
         it->list->buffer[insert_to].previous_index = it->previous;
         it->list->buffer[insert_to].next_index = it->list->buffer[it->previous].next_index;
@@ -61,15 +55,15 @@ void iter_insert_before(iterator *it, T val){
     }
 }
 
-void iter_remove(iterator *it){
+void iter_delete(iterator *it){
     if(!it->list->size){
         return;
     }
     it->list->size--;
     if(iter_is_equal(*it, iter_end(it->list))){
-        int to_del = it->list->buffer[barrier_element].next_index;
-        it->list->buffer[barrier_element].next_index = it->list->buffer[to_del].next_index;
-        it->list->buffer[it->list->buffer[barrier_element].next_index].previous_index = barrier_element;
+        int to_del = it->list->buffer[it->list->barrier_element].next_index;
+        it->list->buffer[it->list->barrier_element].next_index = it->list->buffer[to_del].next_index;
+        it->list->buffer[it->list->buffer[it->list->barrier_element].next_index].previous_index = it->list->barrier_element;
         it->list->buffer[to_del].next_index = it->list->first_empty_index;
         it->list->first_empty_index = to_del;
     } else{
@@ -82,14 +76,15 @@ void iter_remove(iterator *it){
 }
 
 void list_create(list *l){
-    l->capacity = 20;
+    l->barrier_element = 0;
+    l->capacity = 10;
     l->buffer = malloc(l->capacity * sizeof(list_element));
-    l->buffer[barrier_element].previous_index = barrier_element;
-    l->buffer[barrier_element].next_index = barrier_element;
+    l->buffer[l->barrier_element].previous_index = l->barrier_element;
+    l->buffer[l->barrier_element].next_index = l->barrier_element;
     for(int i = 1; i < l->capacity - 1; i++){
         l->buffer[i].next_index = i + 1;
     }
-    l->buffer[l->capacity - 1].next_index = barrier_element;
+    l->buffer[l->capacity - 1].next_index = l->barrier_element;
     l->first_empty_index = 1;
     l->size = 0;
 }
@@ -106,15 +101,16 @@ bool list_is_empty(list* l){
 }
 
 T list_get(list* l, int i){
-    int cur_idx = l->buffer[barrier_element].next_index;
+    int cur_idx = l->buffer[l->barrier_element].next_index;
     while (i > 0){
         cur_idx = l->buffer[cur_idx].next_index;
+        --i;
     }
     return l->buffer[cur_idx].value;
 }
 
 void list_print(list* l){
-    for(iterator it = iter_begin(l); !iter_is_equal(it, iter_end(l)); it = iter_next(it)){
+    for (iterator it = iter_begin(l); !iter_is_equal(it, iter_end(l)); it = iter_next(it)){
         printf("%d ", iter_get_value(it));
     }
     printf("\n");
@@ -125,19 +121,21 @@ int list_size(list* l){
 }
 
 bool list_grow_buffer(list *l){
-    int tmp = l->capacity * 3 / 2;
-    list_element* newd = realloc(l->buffer, tmp * sizeof(list_element));
-    if(newd == NULL){
-        fprintf(stderr, "Not enough memory\n");
+    int new_capacity = l->capacity * 3 / 2;
+    if (new_capacity < 10){
+        new_capacity = 10;
+    }
+    list_element* tmp = realloc(l->buffer, new_capacity * sizeof(list_element));
+    if(tmp == NULL){
         return false;
     }
-    l->buffer = newd;
+    l->buffer = tmp;
     l->first_empty_index = l->capacity;
-    for(int i = l->capacity; i < tmp - 1; i++){
+    for(int i = l->capacity; i < new_capacity - 1; i++){
         l->buffer[i].next_index = i + 1;
     }
-    l->buffer[tmp - 1].next_index = barrier_element;
-    l->capacity = tmp;
+    l->buffer[new_capacity - 1].next_index = l->barrier_element;
+    l->capacity = new_capacity;
     return true;
 }
 
@@ -147,35 +145,23 @@ void list_insert(list *l, int i, T val){
             return;
         }
     }
-    int cur_idx = barrier_element;
+    int cur_idx = l->barrier_element;
     while(i > 0){
         cur_idx = l->buffer[cur_idx].next_index;
         i--;
-        if(cur_idx == barrier_element){
-            fprintf(stderr, "Index out of bounds\n");
-            return;
-        }
     }
     iterator it = (iterator){l, cur_idx};
     iter_insert_before(&it, val);
 }
 
 void list_delete(list *l, int i){
-    int cur_idx = barrier_element;
-    if(i < 0){
-        fprintf(stderr, "Index out of bounds\n");
-        return;
-    }
+    int cur_idx = l->barrier_element;
     while(i > 0){
         cur_idx = l->buffer[cur_idx].next_index;
         i--;
-        if(cur_idx == barrier_element){
-            fprintf(stderr, "Index out of bounds\n");
-            return;
-        }
     }
     iterator it = (iterator){l, cur_idx};
-    iter_remove(&it);
+    iter_delete(&it);
 }
 
 void list_push_front(list *l, T val){
@@ -194,18 +180,38 @@ void list_pop_back(list *l){
     list_delete(l, list_size(l) - 1);
 }
 
-void list_iter_swap(iterator* a, iterator* b){
-    T t = iter_get_value(*b);
-    iter_set_value(b, iter_get_value(*a));
-    iter_set_value(a, t);
-}
-
-void list_reverse(list *l){
-    iterator front = iter_begin(l);
-    iterator back = iter_previous(iter_end(l));
-    for(int i = 0; i < list_size(l) / 2; i++){
-        list_iter_swap(&front, &back);
-        front = iter_next(front);
-        back = iter_previous(back);
+bool list_sorted(list *l){
+    if (list_size(l) <= 2){
+        return true;
     }
+    iterator left = iter_begin(l);
+    iterator right = iter_next(left);
+    while (iter_get_value(left) == iter_get_value(right)){
+        right = iter_next(right);
+        if (iter_is_equal(right, iter_end(l))){
+            return true;
+        }
+    }
+    bool increase;
+    if (iter_get_value(left) < iter_get_value(right)){
+        increase = true;
+    } else {
+        increase = false;
+    }
+    left = right;
+    right = iter_next(right);
+    while (!iter_is_equal(right, iter_end(l))){
+        if (iter_get_value(left) < iter_get_value(right)){
+            if (!increase){
+                return false;
+            }
+        } else if (iter_get_value(left) > iter_get_value(right)){
+            if (increase){
+                return false;
+            }
+        }
+        left = right;
+        right = iter_next(right);
+    }
+    return true;
 }

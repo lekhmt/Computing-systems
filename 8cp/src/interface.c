@@ -5,7 +5,7 @@
 
 #include "../headers/interface.h"
 
-char* commands[] = {"insert", "add", "remove", "delete", "print", "size", "reverse", "clear", "exit", "help"};
+char* commands[] = {"insert", "add", "remove", "delete", "print", "size", "sorted", "exit", "help"};
 
 void clear_from_tabs(char* _word){
     for (int i = 0; i < strlen(_word); ++i){
@@ -20,7 +20,7 @@ void clear_from_tabs(char* _word){
 
 bool is_command(char* _word){
     bool result = false;
-    for (int i = 0; i < 10; ++i){
+    for (int i = 0; i < 9; ++i){
         if (strcmp(_word, commands[i]) == 0){
             result = true;
         }
@@ -59,7 +59,7 @@ void help(){
            "\t--- \033[1mdelete back\033[0m - delete one object at the back of list\n"
            "\t--- \033[1mprint\033[0m - print list\n"
            "\t--- \033[1msize\033[0m - print size of list\n"
-           "\t--- \033[1mreverse\033[0m - reverse list\n"
+           "\t--- \033[1msorted\033[0m - shows if list is sorted\n"
            "\t--- \033[1mexit\033[0m - close program\n"
            "\t--- \033[1mhelp\033[0m - show this information\n");
 }

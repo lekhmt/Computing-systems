@@ -14,6 +14,7 @@ typedef struct {
     int capacity;
     int size;
     int first_empty_index;
+    int barrier_element;
 } list;
 
 typedef struct {
@@ -45,6 +46,6 @@ void     list_push_back     (list* l, T value);
 void     list_pop_front     (list* l);
 void     list_pop_back      (list* l);
 void     list_delete        (list* l, int index);
-void     list_reverse       (list* l);
+bool     list_sorted       (list* l);
 
 #endif
