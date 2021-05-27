@@ -111,7 +111,7 @@ T list_get(list* l, int i){
 
 void list_print(list* l){
     for (iterator it = iter_begin(l); !iter_is_equal(it, iter_end(l)); it = iter_next(it)){
-        printf("%d ", iter_get_value(it));
+        printf("%.1f ", iter_get_value(it));
     }
     printf("\n");
 }

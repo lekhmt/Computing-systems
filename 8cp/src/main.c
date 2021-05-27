@@ -12,34 +12,21 @@
 
 int main(int argc, char* argv[]){
 
+    list l;
+    list_create(&l);
+
     if (argc != 1){
         if (strcmp(argv[1], "-p") == 0 || strcmp(argv[1], "--preset") == 0){
-            printf("preset value\n");
+            list_push_back(&l, 1);
+            list_push_back(&l, 2);
+            list_push_back(&l, 3);
+            list_push_back(&l, 4);
+            list_push_back(&l, 5);
         } else {
             print_error("undefined option.");
             exit(1);
         }
     }
-
-    list l;
-    list_create(&l);
-
-    list_push_back(&l, 1);
-    list_push_back(&l, 2);
-    list_push_back(&l, 3);
-    list_push_back(&l, 3);
-    list_push_back(&l, 3);
-    list_push_back(&l, 3);
-    list_push_back(&l, 3);
-    list_push_back(&l, 3);
-    list_push_back(&l, 3);
-    list_push_back(&l, 3);
-    list_push_back(&l, 3);
-    list_push_back(&l, 3);
-    list_push_back(&l, 3);
-    list_push_back(&l, 3);
-
-
 
     char word[STRING_CAPACITY];
     bool response;
@@ -64,7 +51,7 @@ int main(int argc, char* argv[]){
 
         if (strcmp(word, "insert") == 0){
             T value; int index;
-            scanf("%d %d", &value, &index);
+            scanf("%lf %d", &value, &index);
             if (index < 0 || index >= list_size(&l)){
                 print_error("invalid index.");
             } else {
@@ -77,7 +64,7 @@ int main(int argc, char* argv[]){
             char target[STRING_CAPACITY];
             scanf("%s", target);
             T value;
-            scanf("%d", &value);
+            scanf("%lf", &value);
             if (strcmp("front", target) == 0){
                 list_push_front(&l, value);
             } else if (strcmp("back", target) == 0){
@@ -119,7 +106,11 @@ int main(int argc, char* argv[]){
             if (strcmp(word, "") != 0){
                 print_note("function \"print\" does not require arguments.");
             }
-            list_print(&l);
+            if (list_is_empty(&l)){
+                print_note("list is empty.");
+            } else {
+                list_print(&l);
+            }
             continue;
         }
 
@@ -136,6 +127,10 @@ int main(int argc, char* argv[]){
             read_arguments(word);
             if (strcmp(word, "") != 0){
                 print_note("function \"sorted\" does not require arguments.");
+            }
+            if (list_is_empty(&l)){
+                print_note("list is empty.");
+                continue;
             }
             if (list_sorted(&l)){
                 printf("list is sorted.\n");

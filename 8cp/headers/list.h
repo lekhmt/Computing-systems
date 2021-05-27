@@ -1,7 +1,7 @@
 #ifndef _LIST_H
 #define _LIST_H
 
-typedef int T;
+typedef double T;
 
 typedef struct {
     T value;
