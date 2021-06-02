@@ -5,6 +5,26 @@
 #include "../headers/list.h"
 
 // iterator
+
+bool list_grow_buffer(list *l){
+    int new_capacity = l->capacity * 3 / 2;
+    if (new_capacity < 10){
+        new_capacity = 10;
+    }
+    list_element* tmp = realloc(l->buffer, new_capacity * sizeof(list_element));
+    if(tmp == NULL){
+        return false;
+    }
+    l->buffer = tmp;
+    l->first_empty_index = l->capacity;
+    for(int i = l->capacity; i < new_capacity - 1; i++){
+        l->buffer[i].next_index = i + 1;
+    }
+    l->buffer[new_capacity - 1].next_index = l->barrier_element;
+    l->capacity = new_capacity;
+    return true;
+}
+
 T iter_get_value(iterator it){
     return it.list->buffer[it.previous].value;
 }
@@ -38,6 +58,11 @@ iterator iter_last_element(list *l){
 }
 
 void iter_insert_before(iterator *it, T val){
+    if(it->list->size + 2 > it->list->capacity){
+        if(!list_grow_buffer(it->list)){
+            return;
+        }
+    }
     it->list->size++;
     int insert_to = it->list->first_empty_index;
     it->list->first_empty_index = it->list->buffer[insert_to].next_index;
@@ -118,25 +143,6 @@ void list_print(list* l){
 
 int list_size(list* l){
     return l->size;
-}
-
-bool list_grow_buffer(list *l){
-    int new_capacity = l->capacity * 3 / 2;
-    if (new_capacity < 10){
-        new_capacity = 10;
-    }
-    list_element* tmp = realloc(l->buffer, new_capacity * sizeof(list_element));
-    if(tmp == NULL){
-        return false;
-    }
-    l->buffer = tmp;
-    l->first_empty_index = l->capacity;
-    for(int i = l->capacity; i < new_capacity - 1; i++){
-        l->buffer[i].next_index = i + 1;
-    }
-    l->buffer[new_capacity - 1].next_index = l->barrier_element;
-    l->capacity = new_capacity;
-    return true;
 }
 
 void list_insert(list *l, int i, T val){
