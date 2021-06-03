@@ -1,0 +1,9 @@
+add 1 Poco
+add 8 Shelly
+add 9 Bull
+add 2 Edgar
+add 4 Colt
+add 7 Leon
+add 5 Brock
+add 6 Crow
+add 3 Spike
